@@ -174,15 +174,15 @@ Não é possível mover até o ponto. Fora de alcance.
 
 Podemos notar que para algumas poses, como no Teste 2, o manipulador não consegue alcançar, devido as limitações de comprimento das juntas (L1 + L2).
 
-### Letra C:
+### C)
 
 Em um manipulador RR planar (que possui duas juntas rotativas), a orientação do efetuador final é determinada pelas posições das juntas q1 e q2 e pelas características físicas do manipulador, como os comprimentos dos elos. Por esse motivo, diferente de outros manipuladores robóticos que podem possuir uma junta rotativa na mesma posição do efetuador final para indicar a orientação dele, a orientação do efetuador final em um manipulador do tipo RR planar fica limitada as possíveis soluções para determinada Pose. Uma determinada Pose pode possuir uma ou duas soluções para um manipulador RR planar, e nesse caso teríamos duas possíveis orientações do efetuador final. Porém estar orientações seriam limitadas a essas duas soluções finais, não sendo possível especificar uma orientação final específica.
 
-### Letra D:
+### D)
 
 Quando calculamos a cinemática inversa, podemos ter até dois conjuntos de soluções para as juntas, já que $`\theta2`$ pode assumir valores negativos e positivo devido à raiz quadrada, porém, em certos pontos chamados de pontos singulares, a posição só pode ser alcançada a partir de um conjunto único de ângulos, isto pode acontecer quando $`\theta2`$ atinge valores abaixo do mínimo da junta ou acima do máximo da junta, fazendo com que o braço perca um grau de liberdade, estas posições são comuns nos extremos do espaço de trabalho, onde só podem ser alcançados quando $`\theta2 = \pm 90°k`$ e o braço está todo esticado (L1 + L2).
 
-### Letra E:
+### E)
 
 Quando a pose é inalcançável, o manipulador não consegue movimentar o efetuador final até a posição desejada. Nesse caso, como temos um manipulador simples e nossa função de cálculo de inversa foi feita de forma analítica, podemos verificar ativamente se a pose é inalcançável e informar previamente. No caso de manipuladores muito complexos, onde uma forma analítica da cinemática inversa não pode ser definida, podem existir medidas de segurança para evitar que o manipulador tente atingir posições fora de seu campo de trabalho e ocasione algum dano a si mesmo.
 
@@ -368,204 +368,101 @@ Solução 2 da ikine_LM:
  IKSolution: q=[0, 0.4491, -0.8982], success=True, iterations=5, searches=1, residual=5.93e-13
 ```
 
-Podemos verificar, que os resultados encontrados com nossa função ikine_rrr(), são bem próximos dos resultados encontrados utilizando a solução numérica ikine_LM. O que comprova que a cinemática inversa foi calculada e implementada de forma correta.
+Podemos verificar, que os resultados encontrados com nossa função ikine_rrr(), são bem próximos dos resultados encontrados utilizando a solução numérica ikine_LM. O que comprova que a cinemática inversa foi calculada e implementada de forma correta. A breve diferença entre os valores se dá por que a solução ikine_LM é uma solução numérica e não analítica, e, portanto, possui uma margem de erro.
 
-# Questão 3:
+# Problema 3:
 
-Semelhante a que questão anterior, podemos desenvolver a inkine do Scara de forma trigonométrica ilustrado abaixo:
+Semilar ao problema anterior, podemos deduzir a ikine do manipulador Scara de forma analítica trigonométrica:
 
-<p align="center">
-  <a name="figura-11"></a>
-  <img src="Figure_19.png" alt="Manipulador RR Planar (RoboticsToolBox)" width="50%">
-</p>
-
-Dividindo o problema em duas partes, sendo $`\theta1`$ e $`\theta2`$ um braço planar RR, temos pela lei dos cossenos que:
+Dividindo o manipulador em duas partes, sendo $`\theta1`$ e $`\theta2`$ um braço planar RR, temos pela lei dos cossenos:
 
 $` (\sqrt{x^2 +y^2})^2 = L1^2 + L2^2 - 2*L1*L2os(180° - \theta2) `$
 
-<p align="center">
-  <a name="figura-11"></a>
-  <img src="Figure_20.png" alt="Manipulador RR Planar (RoboticsToolBox)" width="50%">
-</p>
-
-Deixando em função de $`cos(\theta3)`$
+Simplificando em função de $`cos(\theta3)`$
 
 $`cos(\theta2) = \frac{x^2 +y^2 - L1^2 - L2^2}{2*L1*L2}`$
 
-Usando a função trigonométrica:
+Usando a relação trigonométrica:
 
 $`cos(\theta)^2 + sin(\theta)^2 = 1`$
 
-Temos:
+Assim:
 
 $`sin(\theta2) = \sqrt{1 - Cos(\theta2)^2}`$
 
 $`\theta2 = Atan2(sin(\theta2), cos(\theta 2))`$
 
-Já para achar $`\theta2`$, temos que:
+Para encontrar $`\theta2`$, temos:
 
-$`\theta3 = Atan2(x,y)`$ usando novamente a lei dos cossenos podemos achar $`\phi`$:
+$`\theta3 = Atan2(x,y)`$
+
+<br>
+
+Utilizando novamente a lei dos cossenos podemos achar $`\phi`$:
 
 $`L2^2 = L1^2 + (\sqrt{x^2 +y^2})^2 - 2*L1*\sqrt{x^2 +y^2}cos(\phi)`$
 
-Deixando em função de $`\phi`$:
+Simplificando em função de $`\phi`$:
 
 $`cos(\phi) = \frac{x^2 +y^2 + L1^2 - L2^2}{2*L1*\sqrt{x^2 +y^2}}`$
 
-Usando a função trigonométrica:
+Usando a relação trigonométrica:
 
 $`sin(\phi) = \sqrt{1 - Cos(\phi)^2}`$
 
 $`\phi = Atan2(sin(\phi), cos(\phi))`$
 
-Já para achar D3, temos que:
-
-<p align="center">
-  <a name="figura-11"></a>
-  <img src="Figure_21.png" alt="Manipulador RR Planar (RoboticsToolBox)" width="50%">
-</p>
+Já para achar a junta prismática D3, temos que:
 
 $`-z = - D2 + D3 + D4 `$
 
-Então, $`D3 = -z - D4 + D2`$
+Assim:
 
-É por último, como $`\theta4`$ só influencia na rotação do atuador, temos que:
+$`D3 = -z - D4 + D2`$
+
+Como $`\theta4`$ influencia apenas na orientação do efetuador final, temos:
 
 $`\theta4 = 0°`$
 
-Aplicando no código:
+A cinemática inversa foi implementada na função ikine_scara no arquivo P3.py.
+
+#### Teste 1:
 
 ```
-def inkine_Scara(x, y, z, L1=1, L2=1, D2 =0.2 , D4 = 0.2):
-    Co = (y**2 + x**2 - L1**2 - L2**2)/(2*L1*L2)
-
-    if abs(Co) > 1:
-        print("-1 < Cos theta > 1")
-        return None
-
-    So = m.sqrt(1 - Co**2) # Raiz Positiva
-    o2 = m.atan2(So, Co)
-
-    So = -m.sqrt(1 - Co**2) # Raiz Negativa
-    o21 = m.atan2(So, Co)
-
-    b = m.atan2(y, x)
-    r = m.sqrt(y**2 + x**2)
-
-    if r == 0:
-        Cp = 0
-    else:
-        Cp = (y**2 + x**2 + L1**2 - L2**2)/(2*L1*r)
-
-    if abs(Cp) > 1 :
-        print("-1 < Cos phi > 1")
-        return None
-
-    Sp = m.sqrt(1 - Cp**2)
-    p = m.atan2(Sp, Cp)
-
-    if o2 > 0:
-        o1 = b - p
-        o11 = b + p
-    else:
-        o1 = b + p
-        o11 = b - p
-
-    d3 = -z - D4 + D2
-
-    o4 = 0
-
-    print("Possíveis soluções:")
-
-    print('θ1=',o1,'θ2=',o2,'D3=',d3,'θ4=',o4)
-    q = [o1,o2,d3,o4]
-    robot_Scara(q = q)
-
-    print('θ1=',o11,'θ2=',o21,'D3=',d3,'θ4=',o4)
-    q = [o11,o21,d3,o4]
-    robot_Scara(q = q)
-```
-
-Modelando o robô atraves da ToolBox:
-
-```
-def robot_Scara(q = [0,0,0.5,0],L1=1,L2=1,D1=0.2,D3=[0,1],D4=0.2):
-
-    e1 = RevoluteDH(a = L1,d = D1)
-    e2 = RevoluteDH(a = L2,theta2 = PI)
-    e3 = PrismaticDH(qlim = D3)
-    e4 =  RevoluteDH(d = D4)
-    rob = DHRobot([e1,e2,e3,e4], name = 'RRPR')
-
-    rob.teach(q)
-```
-
-#### Caso 1:
-
-```
-inkine_Scara(x = 1,y = 1, z = -1)
+ikine_scara(x = 0,y = 1, z = -0.5)
 ```
 
 **Resultados:**
 
 ```
-Possíveis soluções:
-θ1= -1.1102230246251565e-16 θ2= 1.5707963267948966 D3= 1.0 θ4= 0
+Soluções:
+θ1= 0.5235987755982989 θ2= 2.0943951023931957 D3= 0.5 θ4= 0
+θ1= 2.617993877991494 θ2= -2.0943951023931957 D3= 0.5 θ4= 0
 
+```
+
+<div style="display: flex;">
+  <img src="imgs/P2_6.png" alt="" style="width: 47%;">
+  <img src="imgs/P2_7.png" alt="" style="width: 45%;">
+</div>
+
+#### Teste 2:
+
+```
+ikine_scara(x = 1,y = 1, z = -1)
+```
+
+**Resultados:**
+
+```
+Soluções:
+θ1= -1.1102230246251565e-16 θ2= 1.5707963267948966 D3= 1.0 θ4= 0
 θ1= 1.5707963267948966 θ2= -1.5707963267948966 D3= 1.0 θ4= 0
 ```
 
 <div style="display: flex;">
-  <a name="figura11"></a>
-  <img src="Figure_22.png" alt="" style="width: 47%;">
-  <a name="figura12"></a>
-  <img src="Figure_23.png" alt="" style="width: 45%;">
+  <img src="imgs/P2_4.png" alt="" style="width: 47%;">
+  <img src="imgs/P2_5.png" alt="" style="width: 45%;">
 </div>
 
-#### Caso 2:
-
-```
-inkine_Scara(x = 0,y = 0.5, z = -1)
-```
-
-**Resultados:**
-
-```
-Possivéis soluções:
-θ1= 0.2526802551420786 θ2= 2.636232143305636 D3= 1.0 θ4= 0
-
-θ1= 2.8889123984477143 θ2= -2.636232143305636 D3= 1.0 θ4= 0
-
-```
-
-<div style="display: flex;">
-  <a name="figura11"></a>
-  <img src="Figure_24.png" alt="" style="width: 47%;">
-  <a name="figura12"></a>
-  <img src="Figure_25.png" alt="" style="width: 45%;">
-</div>
-
-#### Caso 3:
-
-```
-inkine_Scara(x = 0.5,y = 0, z = -0.5)
-```
-
-**Resultados:**
-
-```
-Possivéis soluções:
-θ1= -1.318116071652818 θ2= 2.636232143305636 D3= 0.5 θ4= 0
-
-θ1= 1.318116071652818 θ2= -2.636232143305636 D3= 0.5 θ4= 0
-
-```
-
-<div style="display: flex;">
-  <a name="figura11"></a>
-  <img src="Figure_26.png" alt="" style="width: 47%;">
-  <a name="figura12"></a>
-  <img src="Figure_27.png" alt="" style="width: 45%;">
-</div>
-
-Vemos que para todos os casos acimas, existem duas possíveis soluções, no caso "cotovelo para baixo" e "cotovelo para cima", como as juntas não estão delimitadas, só existe a condição de o ponto exista dentro do espaço de trabalho, para ser possível representar a pose final.
+Podemos observar que, para os testes realizados, temos duas possíveis soluções, assim como no Problema 1. Assim, podemos mover o efetuador final para o mesmo ponto utilizando duas orientações de juntas diferentes.
