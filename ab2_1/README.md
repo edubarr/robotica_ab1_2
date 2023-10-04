@@ -32,9 +32,9 @@ Sabemos que a tabela DH para um manipulador Planar é:
 
 Podemos então calcular a Pose final da base até o atuador utilizando as transformações:
 
-$`^jT_{j+1}=\begin{bmatrix}\cos \theta _j&-\sin \theta _j\cos \alpha _j&\sin \theta _j\sin \alpha _j&a_j\cos \theta _j\\
-\sin \theta _j&\cos \theta _j\cos \alpha _j&-\cos \theta _j\sin \alpha _j&a_j\sin \theta _j\\
-0&\sin \alpha _j&\cos \alpha _j&d_j\\
+$`^jT_{j+1}=\begin{bmatrix}\cos \theta _j&-\sin \theta _j\cos \theta2 _j&\sin \theta _j\sin \theta2 _j&a_j\cos \theta _j\\
+\sin \theta _j&\cos \theta _j\cos \theta2 _j&-\cos \theta _j\sin \theta2 _j&a_j\sin \theta _j\\
+0&\sin \theta2 _j&\cos \theta2 _j&d_j\\
 0&0&0&1\end{bmatrix}`$
 
 Sendo, para simplificação **$`S_{\theta1} = Sen(\theta1), C_{\theta1} = Cos(\theta1)`$** e os outros análogos, temos:
@@ -127,7 +127,7 @@ Onde podemos achar $`\theta1`$ e $`\theta2`$ para a pose $`^BT_W`$.
 
 Aplicando isto no código, temos a função inkine_RRR do arquivo P1.py.
 
-Utilizando o código, temos as saídas:
+Utilizando o código, temos as Resultadoss:
 
 #### Teste 1:
 
@@ -136,7 +136,7 @@ T = transl(0, 1, 0)
 ikine_rr(T)
 ```
 
-**Saída:**
+**Resultados:**
 
 ```
 Pose:
@@ -150,7 +150,7 @@ Solução 1:
 ```
 
 <p align="center">
-  <a name="figura-5"></a>
+  <a name="figura-3"></a>
   <img src="imgs/P1_3.png" width="50%">
 </p>
 
@@ -161,7 +161,7 @@ T = transl(3, 1, 0)
 ikine_rr(T)
 ```
 
-**Saída:**
+**Resultados:**
 
 ```
 Pose:
@@ -186,400 +186,189 @@ Quando calculamos a cinemática inversa, podemos ter até dois conjuntos de solu
 
 Quando a pose é inalcançável, o manipulador não consegue movimentar o efetuador final até a posição desejada. Nesse caso, como temos um manipulador simples e nossa função de cálculo de inversa foi feita de forma analítica, podemos verificar ativamente se a pose é inalcançável e informar previamente. No caso de manipuladores muito complexos, onde uma forma analítica da cinemática inversa não pode ser definida, podem existir medidas de segurança para evitar que o manipulador tente atingir posições fora de seu campo de trabalho e ocasione algum dano a si mesmo.
 
-## Questão 2:
+## Problema 2:
 
-### Letra A:
+### A)
 
-Podemos demostra o espaço de trabalho da pata robótica RR, a parti do código abaixo, onde os pontos x, y e z são calculados através da cinemática e da tabela DH:
+Similarmente ao Problema 1, podemos representar o espaço de trabalho (assim como a nuvem de pontos possíveis) da pata robótica RRR, a partir da função rrr_work_space() do arquivo "P2.py"
+
+Os pontos da nuvem são calculados através da cinemática e da tabela DH:
+
+| j   | θⱼ       | dⱼ  | aⱼ  | ⍺ⱼ    |
+| --- | -------- | --- | --- | ----- |
+| 1   | θ1 + 90° | 0   | 0   | 90.0° |
+| 2   | θ2       | 0   | L1  | 0.0°  |
+| 2   | θ3 - 90° | 0   | L2  | 0.0°  |
+
+$`^0T_3 = ^0T_1*^1T_2*^2T_3`$
 
 $`^0T_3 = \begin{bmatrix}
-cos(θ+90°)&-sin(θ + 90°)cos(90°)&sin(θ + 90°)sin(90°)&L*cos(θ+90°)\\
-sin(θ+90°)&cos(θ+90°)cos(90°)&-cos(θ + 90°)sin(90°)&L*sin(θ+90°)\\
+cos(θ+90°)&-sin(θ + 90°)cos(90°)&sin(θ + 90°)sin(90°)&L2*cos(θ+90°)\\
+sin(θ+90°)&cos(θ+90°)cos(90°)&-cos(θ + 90°)sin(90°)&L2*sin(θ+90°)\\
 0&sin(90°)&cos(90°)&0\\
 0&0&0&1
 \end{bmatrix}
-\begin{bmatrix}cos(α)&-sin(α)cos(0°)&sin(α)sin(0°)&R*cos(α)\\
-sin(α)&cos(α)cos(0°)&-cos(α)sin(0°)&R*sin(α)\\
+\begin{bmatrix}cos(θ2)&-sin(θ2)cos(0°)&sin(θ2)sin(0°)&R*cos(θ2)\\
+sin(θ2)&cos(θ2)cos(0°)&-cos(θ2)sin(0°)&R*sin(θ2)\\
 0&sin(0°)&cos(0°)&0\\
 0&0&0&1
 \end{bmatrix}
-\begin{bmatrix}cos(β-90°)&-sin(β-90°)cos(0°)&sin(β-90°)sin(0°)&K*cos(β-90°)\\
-sin(β-90°)&cos(β-90°)cos(0°)&-cos(β-90°)sin(0°)&K*sin(β-90°)\\
+\begin{bmatrix}cos(θ3-90°)&-sin(θ3-90°)cos(0°)&sin(θ3-90°)sin(0°)&L1*cos(θ3-90°)\\
+sin(θ3-90°)&cos(θ3-90°)cos(0°)&-cos(θ3-90°)sin(0°)&L1*sin(θ3-90°)\\
 0&sin(0°)&cos(0°)&0\\0&0&0&1
 \end{bmatrix}`$
 
-```
-def Space_Work(L1 = 1,L2 = 1):
-    # Cria uma figura 3D
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+$`^0T_3=\begin{bmatrix}-\sin\left(θ\right)&0&\cos\left(θ\right)\ &0\\
+\cos(θ)&0&\sin(\theta)&0\\
+0&1&0&0\\
+0&0&0&1\end{bmatrix}\begin{bmatrix}\cos(\theta3)&-\sin(\theta3)&0&L1*\cos(θ2)\\
+\sin(\theta3)&\cos(\theta3)&0&L1*\sin(θ2)\\
+0&0&1&0\\
+0&0&0&1\end{bmatrix}\begin{bmatrix}\sin(\theta2)&\cos(\theta2)&0&L2*\sin(\theta2)\\
+-\cos(\theta2)&\sin(\theta2)&0&L2*\cos\left(\theta2\right)\\
+0&0&1&0\\
+0&0&0&1\end{bmatrix}`$
 
-    #  ngulos para o círculo em torno do eixo Z
-    theta = np.linspace(-np.pi/2, np.pi, 20)
-    theta1 = np.linspace(-np.pi/2, np.pi, 20)
-    theta2 = np.linspace(-np.pi/2, np.pi, 20)
-
-    # Raio do círculos
-    r = L1
-    r1 = L1
-    r2 = L1+L2
-
-    # Coordenadas dos pontos no círculo
-    x = r * np.cos(theta)
-    y = r * np.sin(theta)
-    z= np.zeros_like(theta)
-    ax.plot(x, y, z, label='Junta 1')
-
-    x1 = r1 * np.cos(theta1)
-    y1 = np.zeros_like(theta1)
-    z1 = r1 * np.sin(theta1)
-    ax.plot(x1, y1, z1, label='Junta 2')
-
-    # Coordenadas dos pontos no círculo
-    x2 = r2 * np.cos(theta2)
-    y2= r2 * np.sin(theta2)
-    z2= np.zeros_like(theta2)
-    ax.plot(x2, y2, z2, label='Junta 3')
-
-    # Adicione rótulos de eixo
-    ax.axis('equal')
-    ax.set_xlabel('Eixo X')
-    ax.set_ylabel('Eixo Y')
-    ax.set_zlabel('Eixo Z')
-
-    ax.legend()
-    plt.show()
-
-    # Inicialize listas para armazenar as coordenadas x, y e z
-    x_coords = []
-    y_coords = []
-    z_coords = []
-
-    # Calcule as coordenadas cartesianas tridimensionais para cada conjunto de valores de q1, q2 e q3
-    for q1 in theta:
-        for q2 in theta1:
-            for q3 in theta2:
-                x = -L2*m.sin(q3)*m.cos(q2)*m.sin(q1) - L2*m.cos(q3)*m.sin(q2)*m.sin(q1) - 0*m.sin(q1) - L1*m.cos(q3)*m.sin(q1)
-                y = L2*m.sin(q3)*m.cos(q2)*m.cos(q1) + L2*m.cos(q3)*m.sin(q2)*m.cos(q1) + 0*m.cos(q1) + L1*m.cos(q3)*m.cos(q1)
-                z = L2*m.sin(q3)*m.sin(q2) - L2*m.cos(q3)*m.cos(q2) + L1*m.sin(q3)
-                x_coords.append(x)
-                y_coords.append(y)
-                z_coords.append(z)
-
-    # Plote o espaço de trabalho tridimensional
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(x_coords, y_coords, z_coords, s=1, c='b', marker='.')
-    ax.set_xlabel('Coordenada X')
-    ax.set_ylabel('Coordenada Y')
-    ax.set_zlabel('Coordenada Z')
-    ax.set_title('Espaço de Trabalho do Manipulador RRR')
-    plt.show()
-```
+$`^0T_{3=}\begin{bmatrix}-\sin(θ2)\cos(θ3)\sin(θ)-\cos(θ2)\sin(θ3)\sin(θ)&\sin(θ2)\sin(θ3)\sin(θ)-\cos(θ2)\cos(θ3)\sin(θ)&\cos(θ)&-L1\cos(θ3)\sin(θ)-L2\sin(θ2)\cos(θ3)\sin(θ)-L2\cos(θ2)\sin(θ3)\sin(θ)\\
+\sin(θ2)\cos(θ3)\cos(θ)+\cos(θ2)\sin(θ3)\cos(θ)&\cos(θ2)\cos(θ3)\cos(θ)-\sin(θ2)\sin(θ3)\cos(θ)&\sin(θ)&L1\cos(θ3)\cos(θ)+L2\sin(θ2)\cos(θ3)\cos(θ)+L2\cos(θ2)\sin(θ3)\cos(θ)\\
+\sin(θ2)\sin(θ3)-\cos(θ2)\cos(θ3)&\sin(θ2)\cos(θ3)+\cos(θ2)\sin(θ3)&0&L1\sin(θ3)+L2\sin(θ2)\sin(θ3)-L2\cos(θ2)\cos(θ3)\\
+0&0&0&1\end{bmatrix}`$
+Portanto:
 
 ```
-Space_Work()
+x = -Kcos(θ3)sin(θ)-Lsin(θ2)cos(θ3)sin(θ)-Lcos(θ2)sin(θ3)sin(θ)
+y = Kcos(θ3)cos(θ)+Lsin(θ2)cos(θ3)cos(θ)+Lcos(θ2)sin(θ3)cos(θ)
+z = Ksin(θ3)+Lsin(θ2)sin(θ3)-Lcos(θ2)cos(θ3)
 ```
 
-**Saída:**
+**Resultados:**
 
 <div style="display: flex;">
-  <a name="figura7"></a>
-  <img src="Figure_8.png" alt="" style="width: 47%;">
-  <a name="figura8"></a>
-  <img src="Figure_6.png" alt="" style="width: 45%;">
+  <a name="figura4"></a>
+  <img src="imgs/P2_1.png" alt="" style="width: 47%;">
+  <a name="figura5"></a>
+  <img src="imgs/P2_2.png" alt="" style="width: 45%;">
 </div>
 
-Note que ao olha com mais atenção, podemos ver que existe uma região dentro da esfera que não podemos alcançar devido às limitações das junta estarem entre [-pi/2, pi], isto pode ser melhor notado no círculo trigonométrico, onde a 4.º quadrante(indicado pela seta) possuir menos pontos, causado um afunilamento na região.
+Podemos observar que existe regiões dentro da esfera de espaço de trabalho que o manipulador não consegue se posicionar devido às limitações das suas juntas.
 
-<div style="display: flex;">
-  <a name="figura9"></a>
-  <img src="Figure_5.png" alt="" style="width: 47%;">
-  <a name="figura10"></a>
-  <img src="Figure_7.png" alt="" style="width: 45%;">
-</div>
+## B)
 
-## Letra B:
+Observando o plano ZY da pata robótica, podemos ver que a pata do robô se comporta com um manipulador RR planar,assim, pelo método geométrico podemos descobrir $`\theta1, \theta2`$ e $`\theta3`$. Tendo assim a função ikine.
 
-Podendo descrever a pata robótica pela imagem:
-
-<div style="display: flex;">
-  <a name="figura9"></a>
-  <img src="Figure_10.png" alt="" style="width: 47%;">
-  <a name="figura10"></a>
-  <img src="Figure_9.png" alt="" style="width: 45%;">
-</div>
-
-Olhando para plano ZY, podemos ver que a pata do robô se comporta com um RR planar,assim, pelo método geométrico podemos descobrir $`\theta1, \theta2`$ e $` \theta3`$ a inkine por:
-
-Aplicando a Lei dos cossenos no triangulo superior:
-
-<p align="center">
-  <a name="figura-11"></a>
-  <img src="Figure_11.png" alt="Manipulador RR Planar (RoboticsToolBox)" width="50%">
-</p>
+Aplicando a Lei dos cossenos no triângulo formado pela pata robótica, temos:
 
 $` (\sqrt{z^2 +y^2})^2 = L1^2 + L2^2 - 2*L1*L2os(180° - \theta3) `$
 
-Deixando em função de $`cos(\theta3)`$
+Simplificando em função de $`cos(\theta3)`$:
 
 $`cos(\theta3) = \frac{z^2 +y^2 - L1^2 - L2^2}{2*L1*L2}`$
 
-Usando a função trigonométrica:
+Usando a relação trigonométrica:
 
 $`cos(\theta)^2 + sin(\theta)^2 = 1`$
 
-Temos:
+Temos assim $`\theta3`$:
 
 $`sin(\theta3) = \sqrt{1 - Cos(\theta3)^2}`$
 
 $`\theta3 = Atan2(sin(\theta2), cos(\theta 2))`$
 
-Já para achar $`\theta2`$, temos que:
+Para calcularmos $`\theta2`$ temos:
 
-$`\beta = Atan2(z,y)`$ e sendo pela lei dos cossenos
+$`\theta2 = Atan2(z,y)`$
+
+<br>
+
+e Pela lei dos cossenos no outro triângulo:
 
 $`L2^2 = L1^2 + (\sqrt{z^2 +y^2})^2 - 2*L1*\sqrt{z^2 +y^2}cos(\phi)`$
 
 $`cos(\phi) = \frac{z^2 +y^2 + L1^2 - L2^2}{2*L1*\sqrt{z^2 +y^2}}`$
 
-Usando a função trigonométrica:
+Usando a relação trigonométrica:
 
 $`sin(\phi) = \sqrt{1 - Cos(\phi)^2}`$
 
 $`\phi = Atan2(sin(\phi), cos(\phi))`$
 
-Portanto:
+Assim:
 
-$`\theta1 =\beta + \phi `$
+$`\theta1 =\theta3 + \phi `$
 
-É para achar $`\theta 1`$:
+Então para calcular $`\theta 1`$:
 
 $`\theta1 = Atan2(y,x)`$
 
-Modelando a pata por meio da Toolbox do Peter Corker:
+Tendo a cinemática inversa da pata robótica, podemos modelá-la utilizando a robotics-toolbox. A modelagem foi feita na função ikine_rrr() do arquivo P2.py.
 
-```
-def robot_RRR(q = [0,0,0],L1 = 0.15,L2 = 0.15):
+## C)
 
-    e1 = RevoluteDH(d = 0, alpha = PI/2, offset = PI/2)
-    e2 = RevoluteDH(a = L1)
-    e3 = RevoluteDH(a = L2,offset = -PI/2)
+Utilizaremos a função ikine_rrr() desenvolvida na letra B anterior para comparar com a representação utilizando a classe RobotDH (implementada na função robot_rrr()).
 
-    rob = DHRobot([e1,e2,e3], name = 'RRR')
-    #print(rob)
-    rob.teach(q)
-    return rob
-```
-
-Aplicando em codigo para achar $`\theta1, \theta2`$ e $` \theta3`$, temos:
-
-```
-def inkine_RRR(x, y, z, L1=0.15, L2=0.15):
-    Co = (y**2 + z**2 - L1**2 - L2**2)/(2*L1*L2)
-
-    if abs(Co) > 1:
-        print("-1 < Cos theta > 1")
-        return None
-
-    So = m.sqrt(1 - Co**2) # Raiz Positiva
-    o3 = m.atan2(So, Co)
-
-    So1 = -m.sqrt(1 - Co**2) # Raiz Negativa
-    o31 = m.atan2(So1, Co)
-
-    b = m.atan2(z, y)
-
-    r = m.sqrt(y**2 + z**2)
-    if r == 0:
-        Cp = 0
-    else:
-        Cp = (y**2 + z**2 + L1**2 - L2**2)/(2*L1*r)
-
-    if abs(Cp) > 1 :
-        print("-1 < Cos phi > 1")
-        return None
-
-    Sp = m.sqrt(1 - Cp**2)
-    p = m.atan2(Sp, Cp)
-
-
-    if o3 > 0:
-        o2 = b - p
-        o21 = b + p
-    else:
-        o2 = b + p
-        o21 = b - p
-
-    o1 = m.atan2(y, x)
-
-    print("Possivéis soluções:")
-    if abs(o1 - PI/2) > m.pi/2 or abs(o2) > m.pi/2 or abs(o3+PI/2) > m.pi/2:
-
-        print('θ1=',o1- PI/2,'θ2=',o2,'θ3=',o3+PI/2)
-        q = [o1 - PI/2,o21,o31 + PI/2]
-        robot_RRR(q = q)
-
-        if abs(o1) > m.pi/2 or abs(o21) > m.pi/2 or abs(o31) > m.pi/2:
-            print('θ1=',o1- PI/2,'θ2=',o21,'θ3=',o31+PI/2)
-            q = [o1 - PI/2,o2,o3 + PI/2]
-            robot_RRR(q = q)
-    else:
-        print("Não há solução dentro do intervalo -π/2 < θ1, θ2, θ3 < π/2")
-        return None
-```
-
-## Letra C:
-
-Ultiliza a inkine_RRR( ), desenvolvida no itém anterior podemos achar os ângulos atraves de x, y, e z disposto no espaço de trabalho e comparando com a inkine da biblioteca ToolBox
-
-```
-rob = robot_RRR()
-```
+Temos a representação da pata robótica em posição (0, 0, 0):
 
 <p align="center">
-  <a name="figura-11"></a>
-  <img src="Figure_12.png" alt="Manipulador RR Planar (RoboticsToolBox)" width="50%">
+  <img src="imgs/P2_3.png" alt="Manipulador RR Planar (RoboticsToolBox)" width="50%">
 </p>
 
-Posição zero das juntas.
-
-### Caso 1:
+### Teste 1:
 
 ```
-inkine_RRR(x=0, y=1,z =0)
-
-
+(x=0, y=1,z =0)
 ```
 
-**Saída:**
+**Resultados:**
+
+Teste 1:
 
 ```
 Possíveis soluções:
-θ1= 0.0 θ2= -1.994827366285637 θ3= 3.989654732571274
-θ1= 0.0 θ2= 1.0471975511965976 θ3= -0.5235987755982991
-
+θ1= 0.0 θ2= -0.8410686705679301 θ3= 3.2529336679307566
+θ1= 0.0 θ2= 0.8410686705679301 θ3= -0.11134101434096366
 Pose =
     0         0         1         0
-   0.5      -0.866     0         0.15
-   0.866     0.5       0         0
+   0.6667   -0.7454    0         0.2
+   0.7454    0.6667    0         0
    0         0         0         1
 
-Solução da Biblioteca:
- IKSolution: q=[0, -1.047, -2.618], success=True, iterations=5, searches=1, residual=7.41e-11
+Solução 1 da ikine_LM:
+ IKSolution: q=[0, -0.8411, -3.03], success=True, iterations=7, searches=1, residual=3.64e-07
 Pose =
     0         0         1         0
-   0.5       0.866     0         0.15
-  -0.866     0.5       0         0
+   0.6667    0.7454    0         0.2
+  -0.7454    0.6667    0         0
    0         0         0         1
 
-Solução da Biblioteca:
- IKSolution: q=[0, 1.047, -0.5236], success=True, iterations=15, searches=1, residual=2.97e-09
+Solução 2 da ikine_LM:
+ IKSolution: q=[0, 0.8411, -0.1113], success=True, iterations=22, searches=1, residual=3.92e-10
 ```
 
-<div style="display: flex;">
-  <a name="figura11"></a>
-  <img src="Figure_13.png" alt="" style="width: 47%;">
-  <a name="figura12"></a>
-  <img src="Figure_14.png" alt="" style="width: 45%;">
-</div>
-
-Através da do q encontrado, podemos conferir se nossa inkine está correta comparando com a inkine da toolbox, onde calculando a Pose através dos ângulos encontrados anteriomente, podemos a calcular a inversa com a função ikine_LM(Pose)
+Teste 2:
 
 ```
-# Cinemática inversa
-P = rob.fkine(q = [0.0,-1.0471975511965976,3.6651914291880923])
-print('Pose =\n', P)
-sol = rob.ikine_LM(P)
-print('Solução da Biblioteca:\n',sol)
-
-P = rob.fkine(q = [0.0,1.0471975511965976,-0.5235987755982991])
-print('Pose =\n', P)
-sol = rob.ikine_LM(P)
-print('Solução da Biblioteca:\n',sol)
-```
-
-**Saída:**
-
-```
-Pose =
-    0         0         1         0
-   0.5      -0.866     0         0.15
-   0.866     0.5       0         0
-   0         0         0         1
-
-Solução da Biblioteca:
- IKSolution: q=[0, -1.047, -2.618], success=True, iterations=5, searches=1, residual=7.41e-11
-Pose =
-    0         0         1         0
-   0.5       0.866     0         0.15
-  -0.866     0.5       0         0
-   0         0         0         1
-
-Solução da Biblioteca:
- IKSolution: q=[0, 1.047, -0.5236], success=True, iterations=15, searches=1, residual=2.97e-09
-```
-
-Note que obtermos os mesmo ângulo encontrados anteriomente, provando que nossa implementação, também note que para a função ikine_LM, é necessário enviar uma pose, não só as coordenada de x,y,z, pois nesta função ele também computar a orientação final, influenciando nos ângulos resualtante, no caso que só foi passado uma Pose qualquer sem rotação através da P = transl(x,y,z), obteve um grande erro na pose final, já que ele tente orienta a o atuador para que os ângulos sejam correspondentes a da pose inicial, no caso $`cos(\phi) = 0`$
-
-### Caso 2:
-
-```
-inkine_RRR(x=0,y=0.07,z=-0.07)
-print(rob.ikine_LM(transl(x=0,y=0.5,z=-0.5)))
-rob = robot_RRR(q=[-1.368, -2.779, 4.182])
-```
-
-**Saída:**
-
-```
-Possivéis soluções:
-θ1= 0.0 θ2= -2.0199087495022043 θ3= 4.039817499004409
-θ1= 0.0 θ2= 0.4491124227073078 θ3= -0.8982248454146156
-```
-
-<div style="display: flex;">
-  <a name="figura11"></a>
-  <img src="Figure_15.png" alt="" style="width: 47%;">
-  <a name="figura12"></a>
-  <img src="Figure_16.png" alt="" style="width: 45%;">
-</div>
-
-Dá mesma forma que no caso 1:
-
-```
-# Cinemática inversa
-P = rob.fkine(q = [0.0,-2.0199087495022043,4.039817499004409])
-print('Pose =\n', P)
-sol = rob.ikine_LM(P)
-print('Solução da Biblioteca:\n',sol)
-
-P = rob.fkine(q = [0.0,0.4491124227073078,-0.8982248454146156])
-print('Pose =\n', P)
-sol = rob.ikine_LM(P)
-print('Solução da Biblioteca:\n',sol)
-```
-
-**Saída:**
-
-```
+Possíveis soluções:
+θ1= 0.0 θ2= -1.8653118119030336 θ3= 3.730623623806067
+θ1= 0.0 θ2= 0.2945154851081371 θ3= -0.5890309702162737
 Pose =
     0         0         1         0
    0.9008   -0.4342    0         0.07
    0.4342    0.9008    0        -0.07
    0         0         0         1
 
-Solução da Biblioteca:
- IKSolution: q=[0, -2.02, -2.243], success=True, iterations=6, searches=1, residual=1.01e-08
+Solução 1 da ikine_LM:
+ IKSolution: q=[0, -2.02, -2.243], success=True, iterations=13, searches=1, residual=4.24e-09
 Pose =
     0         0         1         0
   -0.4342    0.9008    0         0.07
   -0.9008   -0.4342    0        -0.07
    0         0         0         1
 
-Solução da Biblioteca:
- IKSolution: q=[0, 0.4491, -0.8982], success=True, iterations=7, searches=1, residual=2.22e-07
+Solução 2 da ikine_LM:
+ IKSolution: q=[0, 0.4491, -0.8982], success=True, iterations=5, searches=1, residual=5.93e-13
 ```
+
+Podemos verificar, que os resultados encontrados com nossa função ikine_rrr(), são bem próximos dos resultados encontrados utilizando a solução numérica ikine_LM. O que comprova que a cinemática inversa foi calculada e implementada de forma correta.
 
 # Questão 3:
 
@@ -615,7 +404,7 @@ $`\theta2 = Atan2(sin(\theta2), cos(\theta 2))`$
 
 Já para achar $`\theta2`$, temos que:
 
-$`\beta = Atan2(x,y)`$ usando novamente a lei dos cossenos podemos achar $`\phi`$:
+$`\theta3 = Atan2(x,y)`$ usando novamente a lei dos cossenos podemos achar $`\phi`$:
 
 $`L2^2 = L1^2 + (\sqrt{x^2 +y^2})^2 - 2*L1*\sqrt{x^2 +y^2}cos(\phi)`$
 
@@ -703,7 +492,7 @@ Modelando o robô atraves da ToolBox:
 def robot_Scara(q = [0,0,0.5,0],L1=1,L2=1,D1=0.2,D3=[0,1],D4=0.2):
 
     e1 = RevoluteDH(a = L1,d = D1)
-    e2 = RevoluteDH(a = L2,alpha = PI)
+    e2 = RevoluteDH(a = L2,theta2 = PI)
     e3 = PrismaticDH(qlim = D3)
     e4 =  RevoluteDH(d = D4)
     rob = DHRobot([e1,e2,e3,e4], name = 'RRPR')
@@ -717,7 +506,7 @@ def robot_Scara(q = [0,0,0.5,0],L1=1,L2=1,D1=0.2,D3=[0,1],D4=0.2):
 inkine_Scara(x = 1,y = 1, z = -1)
 ```
 
-**Saída:**
+**Resultados:**
 
 ```
 Possíveis soluções:
@@ -739,7 +528,7 @@ Possíveis soluções:
 inkine_Scara(x = 0,y = 0.5, z = -1)
 ```
 
-**Saída:**
+**Resultados:**
 
 ```
 Possivéis soluções:
@@ -762,7 +551,7 @@ Possivéis soluções:
 inkine_Scara(x = 0.5,y = 0, z = -0.5)
 ```
 
-**Saída:**
+**Resultados:**
 
 ```
 Possivéis soluções:
