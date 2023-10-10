@@ -82,8 +82,6 @@ A matriz Jacobiana é utilizada para descrever o impacto na saída de mudanças 
 
 Podemos utilizar a função implementada plot_p1() (arquivo [P1.py](P1.py)), para plotar os gráficos de erro de posição e das juntas em relação ao tempo, obtendo os seguintes resultados:
 
-**Saída:**
-
 <div style="display: flex;">
   <a name="figura1"></a>
   <img src="imgs/P1_1.png" alt="q+" style="width: 47%;">
@@ -94,3 +92,151 @@ Podemos utilizar a função implementada plot_p1() (arquivo [P1.py](P1.py)), par
 Podemos verificar que, conforme o tempo passa e as juntas vão se posicionando na posição desejada, o erro vai diminuindo.
 
 ## Questão 2:
+
+Análogamente a Questão 1, temos as transforamções para o manipulador RRR:
+
+$`^0T_3=^0T_1\cdot^1T_2\cdot^2T_3`$
+
+$`^0T_3=\begin{bmatrix}Cos(\theta1)&-Sen(\theta1)&0&L_1Cos(\theta1)\\
+Sen(\theta1)&Cos(\theta1)&0&L_1Sen(\theta1)\\
+0&0&1&0\\
+0&0&0&1\end{bmatrix}\begin{bmatrix}Cos(\theta2)&-Sen(\theta2)&0&L_2Cos(\theta2)\\
+Sen(\theta2)&Cos(\theta2)&0&L_2Sen(\theta2)\\
+0&0&1&0\\
+0&0&0&1\end{bmatrix}\begin{bmatrix}Cos(\theta3)&-Sen(\theta3)&0&L_3Cos(\theta3)\\
+Sen(\theta3)&Cos(\theta3)&0&L_3Sen(\theta3)\\
+0&0&1&0\\
+0&0&0&1\end{bmatrix}`$
+
+$`^0T_3=\begin{bmatrix}
+cos(\theta1 + \theta2 + \theta3 ) & -sin(\theta1 + \theta2 +\theta1) & 0 & L_1*cos(\theta1) + L_2*cos(\theta1 + \theta2) + L_3*cos(\theta1 + \theta2 + \theta3)\\
+sin(\theta1 + \theta2 +\theta1) & cos(\theta1 + \theta2 + \theta3 ) & 0 & L_1*sin(\theta1) + L_2*sin(\theta1 + \theta2) + L_3*sin(\theta1 + \theta2 + \theta3)\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\end{bmatrix}`$
+
+Temos que a matriz Jacobiana pelo método geométrico é dada por:
+
+$`J = \begin{bmatrix}
+J_{P1}&...&J_{Pn}\\
+J_{O1}&...&J_{On}
+\end{bmatrix}`$
+
+Sendo:
+
+Para juntas de revolução:
+
+$`\begin{bmatrix}
+J_{Pi}\\
+J_{Oi}
+\end{bmatrix} = \begin{bmatrix}
+z_{i-1}x(p-p_{i-1})\\ z_{i-1}
+\end{bmatrix}`$
+
+Para juntas Prismatica:
+
+$`\begin{bmatrix}
+J_{Pi}\\
+J_{Oi}
+\end{bmatrix} = 
+\begin{bmatrix}
+z_{i-1}\\ 0
+\end{bmatrix}`$
+
+Assim, para o manipulador RRR planar, temos:
+
+$`\bar p_0 = \begin{bmatrix}0\\0\\0\\1\end{bmatrix}`$
+
+$`p = \begin{bmatrix}
+L1cos(\theta1) + L2cos(\theta1 + \theta2) + L3cos(\theta1  + \theta2  + \theta3)\\
+L1sin(\theta1) + L2sin(\theta1 + \theta2) + L3sin(\theta1  + \theta2  + \theta3)
+\end{bmatrix}`$
+
+$`J(q) = \begin{bmatrix}
+z_{0}x(p-p_{0})&z_{1}x(p-p_{1})&z_{2}x(p-p_{2})\\ 
+z_{0} &z_{1}& z_{2}
+\end{bmatrix}`$
+
+$`p_0 = ^0T_0*\bar p_0 \begin{bmatrix}
+1&0&0&0\\
+0&1&0&0\\
+0&0&1&0\\
+0&0&0&1
+\end{bmatrix}*\begin{bmatrix}0\\0\\0\\1\end{bmatrix} = \begin{bmatrix}0\\0\\0\end{bmatrix}`$
+
+$`z_0 = \begin{bmatrix} 0\\0\\1\end{bmatrix}`$
+
+$`p_1 = ^0T_1*\bar p_0 \begin{bmatrix}
+cos(\theta1)&-sin(\theta1)&0&L1cos((\theta1))\\
+sin(\theta1)&cos(\theta1)&0&L1sin(\theta1)\\
+0&0&1&0\\
+0&0&0&1
+\end{bmatrix}*\begin{bmatrix}L1cos(\theta1)\\L1sin(\theta1)\\0\\1\end{bmatrix} = \begin{bmatrix}L1cos(\theta1)\\L1sin(\theta1)\\0\end{bmatrix}`$
+
+$`z_1 = \begin{bmatrix} 0\\0\\1\end{bmatrix}`$
+
+$`p_2 = ^0T_2*\bar p_0 \begin{bmatrix}
+cos(\theta2)&-sin(\theta2)&0&L1cos(\theta1) +L2cos(\theta2)\\
+sin(\theta2)&cos(\theta2)&0&L1sin(\theta1) + L2sin(\theta2)\\
+0&0&1&0\\
+0&0&0&1
+\end{bmatrix}*\begin{bmatrix}L1cos(\theta1)\\L1sin(\theta1)\\0\\1\end{bmatrix} = \begin{bmatrix}L1cos(\theta1) +L2cos(\theta2)\\L1sin(\theta1) + L2sin(\theta2)\\0\end{bmatrix}`$
+
+$`z_2 = \begin{bmatrix} 0\\0\\1\end{bmatrix}`$
+
+Temos que:
+
+$`z_0 x (p - p_0) = \begin{bmatrix}
+-L1sin(\theta1) -L2sin(\theta1 + \theta2) -L3sin(\theta1 + \theta2 + \theta3)\\
+L1cos(\theta1) + L2cos(\theta1 + \theta2) +L3cos(\theta1 + \theta2 + \theta3)\\
+0
+\end{bmatrix}`$
+
+$`z_1 x (p - p_1) = \begin{bmatrix}
+ -L2sin(\theta1 + \theta2) -L3sin(\theta1 + \theta2 + \theta3)\\
+L2cos(\theta1 + \theta2) +L3cos(\theta1 + \theta2 + \theta3)\\
+0
+\end{bmatrix}`$
+
+$`z_2 x (p - p_2) = \begin{bmatrix}
+-L3sin(\theta1 + \theta2 + \theta3)\\
+L3cos(\theta1 + \theta2 + \theta3)\\
+0
+\end{bmatrix}`$
+
+Assim, temos que a Jacobiana é dada por:
+
+$`J(q) = \begin{bmatrix}-L1sin(\theta1) -L2sin(\theta1 + \theta2) -L3sin(\theta1 + \theta2 + \theta3) &-L2sin(\theta1 + \theta2) -L3sin(\theta1 + \theta2 + \theta3) & -L3sin(\theta1 + \theta2 + \theta3)\\
+L1cos(\theta1) + L2cos(\theta1 + \theta2) +L3cos(\theta1 + \theta2 + \theta3)&L2cos(\theta1 + \theta2) +L3cos(\theta1 + \theta2 + \theta3)&L3cos(\theta1 + \theta2 + \theta3)\\
+0&0&0\\
+0&0&0\\
+0&0&0\\
+1&1&1
+\end{bmatrix}`$
+
+Removendo as linhas zeradas, temos a Jacobiana simplificada:
+
+$`J(q) = \begin{bmatrix}-L1sin(\theta1) -L2sin(\theta1 + \theta2) -L3sin(\theta1 + \theta2 + \theta3) &-L2sin(\theta1 + \theta2) -L3sin(\theta1 + \theta2 + \theta3) & -L3sin(\theta1 + \theta2 + \theta3)\\
+L1cos(\theta1) + L2cos(\theta1 + \theta2) +L3cos(\theta1 + \theta2 + \theta3)&L2cos(\theta1 + \theta2) +L3cos(\theta1 + \theta2 + \theta3)&L3cos(\theta1 + \theta2 + \theta3)\\
+1&1&1
+\end{bmatrix}`$
+
+De maneira análoga a questão 1, utilizando as funções implementadas no arquivo [P2.py](P2.py), podemos modelar o manipulador RRR e calcular os ângulos finais das juntas utilizando a Jacobiana:
+
+**Temos os ângulos finais das juntas para a Pose (setup.py):**
+
+```
+q = [0.06813279800467176, 3.6065877410773783, -2.318719353838379]
+```
+
+Podemos notar que, da mesma forma da questão anterior, utilizando o algoritmo **resolved rate control**, obtemos de maneira facilitada a cinemática inversa do manipulador. Neste caso utilizando o yaw como variável de controle para encontrar o ângulo da terceira junta. Podemos observar também que, por conta de um ajuste que pode ser necessário quando o determinante da Jacobiana é zero, a pose aproximada calculada pelo algoritmo pode se diferenciar da pose desejada real.
+
+**Erro de posição em relação ao tempo e ângulos das juntas:**
+
+<div style="display: flex;">
+  <a name="figura1"></a>
+  <img src="imgs/P2_1.png" alt="q+" style="width: 47%;">
+  <a name="figura2"></a>
+  <img src="imgs/P2_2.png" alt="" style="width: 45%;">
+</div>
+
+Nesse caso podemos observar que o erro se aproxima muito de zero e as juntas são rotacionadas até a pose correta.
