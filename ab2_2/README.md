@@ -240,3 +240,28 @@ Podemos notar que, da mesma forma da questão anterior, utilizando o algoritmo *
 </div>
 
 Nesse caso podemos observar que o erro se aproxima muito de zero e as juntas são rotacionadas até a pose correta.
+
+## Questão 3:
+
+Sabendo que a Jacobiana de um manipulador do tipo Scara já é conhecida, podemos obtê-la do livro A Mathematical Introduction to Robotic Manipulation, de Richard M. Murray, que pode ser expressa como a matriz:
+
+$J_q=\begin{bmatrix}
+-a_1s_1-a_2s_{12}&a_1c_1+a_1c_{12}&0\\
+-a_2s_{12}&a_2c_{12}&0\\
+0&0&0\end{bmatrix}$
+
+Dessa forma, podemos aplicá-la, de forma análoga a questão 2, utilizando a função resolved_rate_control_scara() (arquivo [P3.py](P3.py)) e suas funções auxiliares.
+
+Podemos observar que, devido a geometria do manipulador, precisamos nos preocupar principalmente com o eixo X, pois é o eixo movimentado, e parcialmente com o eixo Z, pois apenas uma junta pode movimentálo, e temos que o eixo Y é fixo e portanto não precisamos nos preocupar com o erro nele. Dessa forma, podemos plotar o manipulador e seus respectivos erros:
+
+Manipulador:
+
+<a name="figura1"></a>
+<img src="imgs/P3_1.png" alt="q+" style="width: 47%;">
+
+Erros nos eixos X e Z:
+
+<a name="figura1"></a>
+<img src="imgs/P3_2.png" alt="q+" style="width: 47%;">
+
+Podemos observar que o erro tende a 0 no eixo X, o que comprova que o algoritmo está implementado e calculando a cinemática inversa da Scara. Podemos observar também que o erro em Z já está em zero desde o início, o que se dá pois a mudança de posição não precisa alterar a junta prismática que altera a posição em Z.
